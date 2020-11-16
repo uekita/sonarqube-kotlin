@@ -22,6 +22,13 @@ class App {
         }
         return false
     }
+
+    fun isOKTriplicated(a: String): Boolean{
+        if (a == "OK"){
+            return true
+        }
+        return false
+    }
 }
 
 fun main(args: Array<String>) {

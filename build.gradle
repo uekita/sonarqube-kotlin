@@ -48,6 +48,4 @@ sonarqube {
         property "sonar.projectKey", "uekita_sonarqube-kotlin"
         property "sonar.organization", "uekita"
         property "sonar.host.url", "https://sonarcloud.io"
-        property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/customJacocoReportDir/test/jacocoTestReport.xml"
-    }
 }
