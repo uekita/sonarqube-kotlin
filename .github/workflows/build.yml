@@ -34,3 +34,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build test sonarqube --info
+      - name: comment PR
+        uses: unsplash/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: |
+          ### Coverage
+          awk -F, \
+          '{ instructions += $4 + $5; covered += $5 } END \
+          { printf "Total %.2f", 100*covered/instructions }' \
+          /home/runner/work/sonarqube-kotlin/sonarqube-kotlin/build/customJacocoReportDir/test/jacocoTestReport.csv
