@@ -30,7 +30,21 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
       - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube --info
+        run: ./gradlew build test sonarqube --info
+      - name: Get Jacoco coverage
+        id: test-coverage
+        run: |
+          result=`awk -F, '{ instructions += $4 + $5; covered += $5 } END { printf "Total: %.2f%", 100*covered/instructions }' /home/runner/work/sonarqube-kotlin/sonarqube-kotlin/build/customJacocoReportDir/test/jacocoTestReport.csv`
+          echo "::set-output name=coverage::$result"
+      - name: comment PR
+        uses: unsplash/comment-on-pr@master
+        with:
+          msg: |
+            ### JaCoCo Coverage
+            ${{ steps.test-coverage.outputs.coverage }}
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  GH_PACKAGES_USERNAME: ${{ secrets.GH_PACKAGES_USERNAME }}
+  GH_PACKAGES_PASSWORD: ${{ secrets.GH_PACKAGES_PASSWORD }}
